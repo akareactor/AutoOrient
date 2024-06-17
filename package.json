@@ -1,0 +1,19 @@
+{
+	"name": "space.kulibin.autoorient",
+	"version": "1.0.0",
+	"displayName": "Kulibin Auto Orient",
+	"description": "This is an UI canvas auto orientation facility",
+	"author": {
+		"name": "Kulibin.Space",
+		"email": "akareactor@mail.ru",
+		"url": "https://www.kulibin.space"
+	},
+	"samples": [
+		{
+			"displayName": "Demo",
+			"description": "Contains sample scene",
+			"path": "Samples~/Demo"
+		}
+	]
+
+}
