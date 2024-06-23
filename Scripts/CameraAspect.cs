@@ -12,6 +12,7 @@ public class FloatEvent : UnityEvent<float> {}
 [RequireComponent(typeof(Camera))]
 public class CameraAspect : MonoBehaviour {
 
+	public float aspectSoftness = 0.1f; // мягкость пропорций, обычно 10% нормально
 	public float landscape = 16.0f / 9.0f;
 	public float portrait = 9.0f / 16.0f;
 	private int ScreenSizeX = 0;
@@ -30,8 +31,8 @@ public class CameraAspect : MonoBehaviour {
 		float aspect = windowaspect;
 		// 10% мягкость пропорций
 		if (windowaspect >= 1) {
-			if (windowaspect < (0.9f * landscape)) aspect = 0.9f * landscape;
-			if (windowaspect > (1.1f * landscape)) aspect = 1.1f * landscape;
+			if (windowaspect < ((1f - aspectSoftness) * landscape)) aspect = (1f - aspectSoftness) * landscape;
+			if (windowaspect > ((1f + aspectSoftness) * landscape)) aspect = (1f + aspectSoftness) * landscape;
 			landscapeFitter.aspectRatio = aspect;
 		}
 		if (windowaspect < 1) {
