@@ -36,8 +36,8 @@ public class CameraAspect : MonoBehaviour {
 			landscapeFitter.aspectRatio = aspect;
 		}
 		if (windowaspect < 1) {
-			if (windowaspect < (0.9f * portrait)) aspect = 0.9f * portrait;
-			if (windowaspect > (1.1f * portrait)) aspect = 1.1f * portrait;
+			if (windowaspect < ((1f - aspectSoftness) * portrait)) aspect = (1f - aspectSoftness) * portrait;
+			if (windowaspect > ((1f + aspectSoftness) * portrait)) aspect = (1f + aspectSoftness) * portrait;
 			portraitFitter.aspectRatio = aspect;
 		}
 		//float aspect = windowaspect >= 1 ? landscape : portrait;
