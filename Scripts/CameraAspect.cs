@@ -21,9 +21,18 @@ public class CameraAspect : MonoBehaviour {
 	public FloatEvent rescaleEvent;
 	public AspectRatioFitter landscapeFitter;
 	public AspectRatioFitter portraitFitter;
+	public bool clearBackground = true;
+	public Color clearColor = Color.red;
 
 	private void Awake () {
-		if (!camera) camera = GetComponent<Camera>();
+		if (!camera) camera = GetComponent<Camera>(); else print("Need a link to camera!");
+	}
+
+	float GetAspect (float windowAspect, float ratio) {
+		float ret = 1;
+		if (windowAspect < ((1f - aspectSoftness) * landscape)) ret = (1f - aspectSoftness) * landscape;
+		if (windowAspect > ((1f + aspectSoftness) * landscape)) ret = (1f + aspectSoftness) * landscape;
+	return ret;
 	}
 
 	private float RescaleCamera () {
@@ -31,45 +40,47 @@ public class CameraAspect : MonoBehaviour {
 		float aspect = windowaspect;
 		// 10% мягкость пропорций
 		if (windowaspect >= 1) {
-			if (windowaspect < ((1f - aspectSoftness) * landscape)) aspect = (1f - aspectSoftness) * landscape;
-			if (windowaspect > ((1f + aspectSoftness) * landscape)) aspect = (1f + aspectSoftness) * landscape;
-			landscapeFitter.aspectRatio = aspect;
+			aspect = GetAspect(windowaspect, landscape);
+			if (landscapeFitter) landscapeFitter.aspectRatio = aspect;
 		}
 		if (windowaspect < 1) {
-			if (windowaspect < ((1f - aspectSoftness) * portrait)) aspect = (1f - aspectSoftness) * portrait;
-			if (windowaspect > ((1f + aspectSoftness) * portrait)) aspect = (1f + aspectSoftness) * portrait;
-			portraitFitter.aspectRatio = aspect;
+			aspect = GetAspect(windowaspect, portrait);
+			if (portraitFitter) portraitFitter.aspectRatio = aspect;
 		}
 		//float aspect = windowaspect >= 1 ? landscape : portrait;
 		float scaleheight = windowaspect / aspect;
-		if (scaleheight < 1.0f) {
-			Rect rect = camera.rect;
-			rect.width = 1.0f;
-			rect.height = scaleheight;
-			rect.x = 0;
-			rect.y = (1.0f - scaleheight) / 2.0f;
-			camera.rect = rect;
-		} else { // add pillarbox
-			float scalewidth = 1.0f / scaleheight;
-			Rect rect = camera.rect;
-			rect.width = scalewidth;
-			rect.height = 1.0f;
-			rect.x = (1.0f - scalewidth) / 2.0f;
-			rect.y = 0;
-			camera.rect = rect;
-		}
+		if (camera) {
+			if (scaleheight < 1.0f) {
+				Rect rect = camera.rect;
+				rect.width = 1.0f;
+				rect.height = scaleheight;
+				rect.x = 0;
+				rect.y = (1.0f - scaleheight) / 2.0f;
+				camera.rect = rect;
+			} else { // add pillarbox
+				float scalewidth = 1.0f / scaleheight;
+				Rect rect = camera.rect;
+				rect.width = scalewidth;
+				rect.height = 1.0f;
+				rect.x = (1.0f - scalewidth) / 2.0f;
+				rect.y = 0;
+				camera.rect = rect;
+			}
+		} else print("No camera here!");
 	return windowaspect;
 	}
 
 	void OnPreCull () {
-/* Clear background - no need with background camera */
-//		if (Application.isEditor) return;
-//		Rect wp = Camera.main.rect;
-//		Rect nr = new Rect(0, 0, 1, 1);
-//		Camera.main.rect = nr;
-//		GL.Clear(true, true, Color.black);
-//		Camera.main.rect = wp;
-}
+		/* Clear background - no need with background camera */
+		if (clearBackground) {
+			//if (Application.isEditor) return;
+			Rect wp = Camera.main.rect;
+			Rect nr = new Rect(0, 0, 1, 1);
+			Camera.main.rect = nr;
+			GL.Clear(true, true, clearColor);
+			Camera.main.rect = wp;
+		}
+	}
 
 	void Start () {
 		//RescaleCamera(); это бессмысленно! Первый же Update сделает это.
