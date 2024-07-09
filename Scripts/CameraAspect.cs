@@ -28,26 +28,21 @@ public class CameraAspect : MonoBehaviour {
 		if (!camera) camera = GetComponent<Camera>(); else print("Need a link to camera!");
 	}
 
-	float GetAspect (float windowAspect, float ratio) {
-		float ret = 1;
-		if (windowAspect < ((1f - aspectSoftness) * landscape)) ret = (1f - aspectSoftness) * landscape;
-		if (windowAspect > ((1f + aspectSoftness) * landscape)) ret = (1f + aspectSoftness) * landscape;
-	return ret;
-	}
-
 	private float RescaleCamera () {
 		float windowaspect = (float)Screen.width / (float)Screen.height;
 		float aspect = windowaspect;
 		// 10% мягкость пропорций
+		// Значение aspect остаётся неопределённым за рамками условий < или >, это позволяет сохранять предыдущую пропорцию до тех пор, пока не вычислится новая.
 		if (windowaspect >= 1) {
-			aspect = GetAspect(windowaspect, landscape);
+			if (windowaspect < ((1f - aspectSoftness) * landscape)) aspect = (1f - aspectSoftness) * landscape;
+			if (windowaspect > ((1f + aspectSoftness) * landscape)) aspect = (1f + aspectSoftness) * landscape;
 			if (landscapeFitter) landscapeFitter.aspectRatio = aspect;
 		}
 		if (windowaspect < 1) {
-			aspect = GetAspect(windowaspect, portrait);
+			if (windowaspect < ((1f - aspectSoftness) * portrait)) aspect = (1f - aspectSoftness) * portrait;
+			if (windowaspect > ((1f + aspectSoftness) * portrait)) aspect = (1f + aspectSoftness) * portrait;
 			if (portraitFitter) portraitFitter.aspectRatio = aspect;
 		}
-		//float aspect = windowaspect >= 1 ? landscape : portrait;
 		float scaleheight = windowaspect / aspect;
 		if (camera) {
 			if (scaleheight < 1.0f) {
