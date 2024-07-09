@@ -538,8 +538,9 @@ MonoBehaviour:
   rescaleEvent:
     m_PersistentCalls:
       m_Calls: []
-  landscapeFitter: {fileID: 1272973429}
-  portraitFitter: {fileID: 1272973429}
+  landscapeFitter: {fileID: 0}
+  portraitFitter: {fileID: 0}
+  commonFitter: {fileID: 1272973429}
   clearBackground: 1
   clearColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &615048168

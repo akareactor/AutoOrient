@@ -21,6 +21,7 @@ public class CameraAspect : MonoBehaviour {
 	public FloatEvent rescaleEvent;
 	public AspectRatioFitter landscapeFitter;
 	public AspectRatioFitter portraitFitter;
+	public AspectRatioFitter commonFitter; // 2024-07-09 15:32:48 добавил третий фиттер, общий. Чтоб не ломать совместимость.
 	public bool clearBackground = true;
 	public Color clearColor = Color.red;
 
@@ -36,13 +37,16 @@ public class CameraAspect : MonoBehaviour {
 		if (windowaspect >= 1) {
 			if (windowaspect < ((1f - aspectSoftness) * landscape)) aspect = (1f - aspectSoftness) * landscape;
 			if (windowaspect > ((1f + aspectSoftness) * landscape)) aspect = (1f + aspectSoftness) * landscape;
-			if (landscapeFitter) landscapeFitter.aspectRatio = aspect;
+			if (landscapeFitter != null) landscapeFitter.aspectRatio = aspect;
 		}
 		if (windowaspect < 1) {
 			if (windowaspect < ((1f - aspectSoftness) * portrait)) aspect = (1f - aspectSoftness) * portrait;
 			if (windowaspect > ((1f + aspectSoftness) * portrait)) aspect = (1f + aspectSoftness) * portrait;
-			if (portraitFitter) portraitFitter.aspectRatio = aspect;
+			if (portraitFitter != null) portraitFitter.aspectRatio = aspect;
 		}
+		// общий фиттер приспосабливается и к портрету, и к альбому
+		if (commonFitter != null) commonFitter.aspectRatio = aspect;
+		// финальный расчёт рамки камеры
 		float scaleheight = windowaspect / aspect;
 		if (camera) {
 			if (scaleheight < 1.0f) {
